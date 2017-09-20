@@ -1,6 +1,1 @@
-/build
-/test
-/nbproject
-*~
-*.mf
-/dist/
+/target

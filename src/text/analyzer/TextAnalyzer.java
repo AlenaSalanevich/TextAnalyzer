@@ -35,16 +35,23 @@ public class TextAnalyzer {
  byte [] data = new byte [lenght]; // создаем массив данных определенного ранее размера
  wordStream.read(data); // считывае в этот массив данные входного файла
  String text = new String (data); // "переписываем" полученные данные в строку
- text =text.toLowerCase(); //делаем все буквы строчными
  
-FileInputStream stopwordstream = new FileInputStream ("C:\\Users\\Admin\\Documents\\NetBeansProjects\\TextAnalyzer\\stopwords.txt"); //подключаем входной файл cо словами-исключениями
+ String textBrakes = new String (text); //клонируем полученную строку для анализа скобок
+ //String test = "a + (42 - b) * [wtf({)] / {(2 + 2)}"; для быстрых тестов строка была
+ BracketsValidator validator = new BracketsValidator(); //создаем новый объект из класса BracketsValidator
+ boolean correct = validator.validate(textBrakes); // переменная correct результат выполнения метода validate объявленного в классе BracketsValidator
+ System.out.println("Brakes are " + (correct ? "" : "in") + "correct"); 
+        
+
+ FileInputStream stopwordstream = new FileInputStream ("C:\\Users\\Admin\\Documents\\NetBeansProjects\\TextAnalyzer\\stopwords.txt"); //подключаем входной файл cо словами-исключениями
 int lenghstopwords = stopwordstream.available(); //определяем размер входных данных
 byte [] stopData = new byte [lenghstopwords]; // создаем массив данных определенного ранее размера
 stopwordstream.read(stopData); // считывае в этот массив данные входного файла
 String stopwords = new String (stopData); // "переписываем" полученные данные в текст
 
 String [] stopWordsArray =  stopwords.split("\\b");
-List<String> stopWords = new ArrayList<>(Arrays.asList(stopWordsArray));  
+List<String> stopWords = new ArrayList<>(Arrays.asList(stopWordsArray)); 
+ text =text.toLowerCase(); //делаем все буквы строчными
 String [] wordsArray = text.split("[\\p{P} \\t\\n\\r&&[^.]]+|\\.(?!\\S)");  // разбиваем строку входного текста на отдельные слова и записываем его в массив 
 List<String> words = new ArrayList<>(Arrays.asList(wordsArray)); //перезаписываем в список
 List<String> brakes = new ArrayList<>(Arrays.asList("{", "}", "[", "]", ")", "("));
@@ -66,23 +73,19 @@ HashMap<String,Integer> wordMap = new HashMap<>(); // создаем и объя
  {
 System.out.println("Word ---- " + entry.getKey() + " --- Value: " + entry.getValue()); для вывода на экран всех слов с кол-вом их повторений */
  } 
- 
-  List topWordMap = new ArrayList (wordMap.entrySet()); // создаем новый список со значениями и ключами из карты
-      Collections.sort(topWordMap, new Comparator<Map.Entry<Integer, Integer>>() 
-      {
-@Override
-public int compare(Map.Entry<Integer, Integer> b, Map.Entry<Integer, Integer> a) {
-return b.getValue() - a.getValue();  // сортируем по значению (количеству слов)
-        }
-    });
+
+List topWordMap = new ArrayList (wordMap.entrySet()); // создаем новый список со значениями и ключами из карты
+Collections.sort(topWordMap, (Map.Entry<Integer, Integer> b, Map.Entry<Integer, Integer> a) -> b.getValue() - a.getValue() );
+// сортируем по значению (количеству слов)
+
    int j=topWordMap.size();
    int z =topWordMap.size()-10;   // выводим на печать 10 самых популярных :)
-   System.out.println("Top words: "+topWordMap.subList(z, j));     
-     //System.out.println(topWordMap);             
+    
+  System.out.println("Top words: "+ topWordMap.subList(z, j));
+   
                   
     }
                   
 }
 
-
-    
+  
